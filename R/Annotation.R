@@ -1,0 +1,155 @@
+#' Annotates cell populations found using CytomeTree. 
+#' 
+#'@param CytomeTreeObj An object of class CytomeTree.
+#'
+#'@param K3markers A vector of class character where the names of 
+#'the markers for which 3 levels of expression are seeked can be specified.
+#'Default is \code{NULL} i.e. 2 levels of expression per marker. 
+#'
+#'@param plot A logical value indicating whether or not to plot the 
+#'partitioning in 2 or 3 groups for each marker. Default is \code{TRUE}.
+#'
+#'@return A \code{data.frame} containing the annotation of each 
+#'cell population. 
+#'
+#'@details The algorithm is set to find the partitioning in 2 or
+#' 3 groups of cell populations found using CytomeTree. It minimize 
+#' the within-leaves sum of squares of the observed values on each
+#' marker. 
+#'
+#'@author Chariff Alkhassim
+#'
+#'@import ggplot2 graphics 
+#'
+#'@export
+Annotation<- function(CytomeTreeObj, K3markers = NULL, plot = TRUE)
+{
+  if(class(CytomeTreeObj) != "CytomeTree")
+  {
+    stop("CytometreeObj must be of class CytomeTree.")
+  }
+  if(!is.null(K3markers))
+  {
+    if(class(K3markers)!="character")
+    {
+      stop("K3markers must be of class character.")
+    }
+  } 
+  M <- CytomeTreeObj$M
+  labels <- CytomeTreeObj$labels
+  lc <- LeavesCenters(CytomeTreeObj)
+  len_lab <- length(labels)
+  dlc <- dim(lc)
+  n <- dlc[1]
+  p <- dlc[2]
+  leaves <- lc[,p]
+  cnames <- colnames(lc[,1:(p-1)])
+  combinations <- cbind(matrix(0, ncol = (p-1), nrow = n), 1:n)
+  if(n == 1) 
+  {
+    return(cat("CytomeTree found a single population.\n"))
+  }
+  else 
+  {
+    for(j in 1:(p-1))
+    {
+      ExpressLevels <- 2
+      if(any(cnames[j] == K3markers))
+      {
+        ExpressLevels <- 3
+      }
+      leavesSort <- leaves[sort(lc[,j], index.return = TRUE)$ix]
+      M_j <- M[,j]
+      leavesSort_ <- leavesSort
+      partitions2gr <- Partition2gr(n)
+      Kmeans2 <- KmeansOPT(partitions2gr, leavesSort, labels, M_j, K = 2)
+      partwin2gr <- partitions2gr[[Kmeans2$ind]]
+      tempclass_neg.2  <- leavesSort[which(partwin2gr == 1)]
+      tempclass_pos.2  <- leavesSort[which(partwin2gr == 2)]
+      tind1.2 <- which(labels%in%tempclass_neg.2)
+      tind2.2 <- which(labels%in%tempclass_pos.2)
+      partitions3gr <- Partition3gr(n)
+      Kmeans3 <- KmeansOPT(partitions3gr, leavesSort, labels, M_j, K = 3)
+      partwin3gr <- partitions3gr[[which.max(Kmeans3$ind)]]
+      tempclass_neg.3  <- leavesSort[which(partwin3gr == 1)]
+      tempclass_pos.3  <- leavesSort[which(partwin3gr == 2)]
+      tempclass_dpos.3 <- leavesSort[which(partwin3gr == 3)]
+      tind1.3 <- which(labels%in%tempclass_neg.3)
+      tind2.3 <- which(labels%in%tempclass_pos.3)
+      tind3.3 <- which(labels%in%tempclass_dpos.3)
+      if(ExpressLevels == 2)
+      {   
+        combinations[tempclass_pos.2, j] <- 1
+        if(plot)
+        {
+          Expression <- rep(1, len_lab)
+          Expression[labels%in%tempclass_neg.2] <- 2      
+          dfbox <- data.frame(Leaves = factor(labels, levels = 
+                                                as.character(leavesSort)), 
+                              Fluorescence = M[,j], 
+                              Expression = as.factor(Expression))
+          p <- ggplot2::ggplot(dfbox, ggplot2::aes_string("Leaves", 
+                                                          "Fluorescence", 
+                                                          fill = "Expression")
+          )
+          suppressWarnings(print(p + ggplot2::ggtitle(cnames[j]) + 
+                                   ggplot2::geom_boxplot(outlier.shape = NA, 
+                                                         alpha = 1/3)+
+                                   ggplot2::scale_fill_manual(values=c("red",
+                                                                       "blue"),
+                                                              name="Annotation",
+                                                              labels=c("Hi",
+                                                                       "Low")
+                                   )
+          ))
+        }
+      }
+      else if(ExpressLevels == 3)
+      {
+        combinations[tempclass_pos.3, j] <- 1
+        combinations[tempclass_dpos.3, j] <- 2
+        if(plot)
+        {        
+          Expression <- rep(1, len_lab)
+          Expression[labels%in%tempclass_pos.3] <- 2
+          Expression[labels%in%tempclass_dpos.3] <- 3
+          
+          
+          dfbox <- data.frame(Leaves = factor(labels, levels = 
+                                                as.character(leavesSort)), 
+                              Fluorescence = M[,j], 
+                              Expression = as.factor(Expression))
+          p <- ggplot2::ggplot(dfbox, ggplot2::aes_string("Leaves", 
+                                                          "Fluorescence", 
+                                                          fill="Expression"))
+          suppressWarnings(print(p + ggplot2::ggtitle(cnames[j]) + 
+                                   ggplot2::geom_boxplot(outlier.shape=NA, 
+                                                         alpha=1/3)+
+                                   ggplot2::scale_fill_manual(values=c("blue",
+                                                                       "green",
+                                                                       "red"),
+                                                              name="Annotation",
+                                                              labels=c("Low",
+                                                                       "Hi",
+                                                                       "Hi+")
+                                   )
+          ))
+        }
+      }
+    } 
+  }
+  tblabels <- table(labels)
+  combinations <- cbind(combinations, table(labels), round(tblabels/len_lab,4))
+  colnames(combinations) <- c(cnames, "leaves", "count", "prop")
+  outCombinations <- as.data.frame(combinations[sort(combinations[,"count"],
+                                                     TRUE,
+                                                     index.return=TRUE)$ix,])  
+  
+  out <- list("combinations" = outCombinations, "labels" = labels)
+  class(out) <- "Annotation"
+  out
+}
+
+
+
+
