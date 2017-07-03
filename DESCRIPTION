@@ -1,7 +1,7 @@
 Package: cytometree
 Type: Package
 Title: Automated Cytometry Gating
-Version: 1.0.0
+Version: 1.0.1
 Date: 2017-06-25
 Author: Alkhassim Chariff
 Maintainer: Alkhassim Chariff <chariff.alkhassim@gmail.com>
@@ -19,6 +19,6 @@ Imports: ggplot2, graphics, igraph, mclust, stats
 RoxygenNote: 6.0.1
 BugReports: https://github.com/chariff/Cytometree/issues
 NeedsCompilation: yes
-Packaged: 2017-06-25 17:07:32 UTC; Chariff
+Packaged: 2017-07-02 09:20:00 UTC; Chariff
 Repository: CRAN
-Date/Publication: 2017-06-25 23:01:39 UTC
+Date/Publication: 2017-07-03 13:30:40 UTC
