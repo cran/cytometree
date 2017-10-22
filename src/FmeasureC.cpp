@@ -11,6 +11,8 @@ using namespace arma;
 //'@param pred vector of a predicted partition
 //'@param ref vector of a reference partition
 //'
+//'@author Boris Hejblum
+//'
 //'@export
 //'
 // [[Rcpp::export]]
@@ -23,13 +25,13 @@ double FmeasureC(NumericVector pred, NumericVector ref){
   int m = K.size();
   int n = C.size();
   
-  mat M = mat(n, m);
-  mat Pr = mat(n, m);
-  mat Re = mat(n, m);
-  mat Fmat = mat(n, m);
+  mat M(n, m);
+  mat Pr(n, m);
+  mat Re(n, m);
+  mat Fmat(n, m);
   
-  vec C_card = vec(n);
-  vec K_card = vec(m);
+  vec C_card(n);
+  vec K_card(m);
   
   for(int i=0; i<n; i++){
     C_card(i) = sum(ref == C(i));
@@ -47,8 +49,8 @@ double FmeasureC(NumericVector pred, NumericVector ref){
   } 
   
   double C_card_sum = sum(C_card);
-  vec Ffinal = vec(n);
-  vec Fsum = vec(n);
+  vec Ffinal(n);
+  vec Fsum(n);
   
   for(int i=0; i<n; i++){
     Ffinal(i) = max(Fmat.row(i));
@@ -60,13 +62,15 @@ double FmeasureC(NumericVector pred, NumericVector ref){
 }
 
 
-//' C++ implementation of the F-measure computation without the ref classe 0
+//' C++ implementation of the F-measure computation without the reference class labeled "0"
 //' 
 //' Aghaeepour in FlowCAP 1 ignore the reference class labeled "0"
 //' 
 //' 
 //'@param pred vector of a predicted partition
 //'@param ref vector of a reference partition
+//'
+//'@author Boris Hejblum
 //'
 //'@export
 //'
