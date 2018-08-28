@@ -4,7 +4,7 @@
 \alias{CytomeTree}
 \title{Binary tree algorithm for cytometry data analysis.}
 \usage{
-CytomeTree(M, minleaf = 1, t = 0.1)
+CytomeTree(M, minleaf = 1, t = 0.1, verbose = TRUE)
 }
 \arguments{
 \item{M}{A matrix of size n x p containing cytometry measures
@@ -16,6 +16,9 @@ per population. Default is \code{1}.}
 \item{t}{A real positive-or-null number used for comparison with
 the normalized AIC computed at each node of the tree.
 A higher value limits the height of the tree.}
+
+\item{verbose}{A logical controlling if a text progress bar is displayed 
+during the execution of the algorithm. By default is TRUE.}
 }
 \value{
 An object of class 'cytomeTree' providing a partitioning
@@ -36,7 +39,7 @@ Binary tree algorithm for cytometry data analysis.
 The algorithm is based on the construction of a binary tree,
 the nodes of which are subpopulations of cells. At each node,
 observed cells and markers are modeled by both a family of normal
-distributions and a family of bimodal normal mixture distributions.
+distributions and a family of bi-modal normal mixture distributions.
 Splitting is done according to a normalized difference of AIC between
 the two families.
 }
@@ -47,11 +50,11 @@ head(DLBCL)
 N <- nrow(DLBCL)
 
 # Cell events
-cellevents <- DLBCL[,c("FL1", "FL2", "FL4")]
+cellevents <- DLBCL[, c("FL1", "FL2", "FL4")]
 
 
 # Manual partitioning of the set N (from FlowCAP-I)
-manual_labels <- DLBCL[,"label"]
+manual_labels <- DLBCL[, "label"]
 
 
 # Build the binary tree
@@ -63,7 +66,7 @@ Tree_Partition <- Tree$labels
 
 
 # Plot node distributions
-par(mfrow=c(1,2))
+par(mfrow=c(1, 2))
 plot_nodes(Tree)
 
 # Choose a node to plot

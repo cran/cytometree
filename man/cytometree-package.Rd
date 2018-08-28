@@ -9,7 +9,7 @@
 The algorithm is based on the construction of a binary tree, 
 the nodes of which are subpopulations of cells. At each node, 
 observed cells and markers are modeled by both a family of normal
-distributions and a family of bimodal normal mixture distributions. 
+distributions and a family of bi-modal normal mixture distributions. 
 Splitting is done according to a normalized difference of AIC between 
 the two families.
 Given the unsupervised nature of the binary tree, some of the available
@@ -22,8 +22,8 @@ distinguish two or three expression levels per marker.
 \tabular{ll}{
 Package: \tab cytometree\cr
 Type: \tab Package\cr
-Version: \tab 1.1.1\cr
-Date: \tab 2017-10-18\cr
+Version: \tab 1.2.0\cr
+Date: \tab 2018-08-28\cr
 License:\tab \href{http://www.gnu.org/licenses/lgpl.txt}{LGPL-3}\cr
 }
 The main function in this package is \code{\link{CytomeTree}}.

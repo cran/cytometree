@@ -10,6 +10,9 @@
 #'the normalized AIC computed at each node of the tree.
 #'A higher value limits the height of the tree.
 #'
+#'@param verbose A logical controlling if a text progress bar is displayed 
+#'during the execution of the algorithm. By default is TRUE.
+#'
 #'@return An object of class 'cytomeTree' providing a partitioning
 #'of the set of n cells.
 #'\itemize{
@@ -24,7 +27,7 @@
 #'@details The algorithm is based on the construction of a binary tree,
 #'the nodes of which are subpopulations of cells. At each node,
 #'observed cells and markers are modeled by both a family of normal
-#'distributions and a family of bimodal normal mixture distributions.
+#'distributions and a family of bi-modal normal mixture distributions.
 #'Splitting is done according to a normalized difference of AIC between
 #'the two families.
 #'@author Chariff Alkhassim, Boris Hejblum
@@ -38,11 +41,11 @@
 #'N <- nrow(DLBCL)
 #'
 #'# Cell events
-#'cellevents <- DLBCL[,c("FL1", "FL2", "FL4")]
+#'cellevents <- DLBCL[, c("FL1", "FL2", "FL4")]
 #'
 #'
 #'# Manual partitioning of the set N (from FlowCAP-I)
-#'manual_labels <- DLBCL[,"label"]
+#'manual_labels <- DLBCL[, "label"]
 #'
 #'
 #'# Build the binary tree
@@ -54,7 +57,7 @@
 #'
 #'
 #'# Plot node distributions
-#'par(mfrow=c(1,2))
+#'par(mfrow=c(1, 2))
 #'plot_nodes(Tree)
 #'
 #'# Choose a node to plot
@@ -126,7 +129,7 @@
 #'
 #'}
 
-CytomeTree <- function(M, minleaf = 1, t = .1)
+CytomeTree <- function(M, minleaf = 1, t = .1, verbose = TRUE)
 {
   if((class(M) != "matrix") & (class(M) != "data.frame"))
   {
@@ -145,7 +148,7 @@ CytomeTree <- function(M, minleaf = 1, t = .1)
   {
     stop("M contains NAs.")
   }
-  BT <- BinaryTree(M, floor(minleaf), t)
+  BT <- BinaryTree(M, floor(minleaf), t, verbose)
   annotation <- TreeAnnot(BT$labels, BT$combinations)
   Tree <- list("M" = M, "labels" = BT$labels,
                "pl_list"= BT$pl_list, "t"= t,
