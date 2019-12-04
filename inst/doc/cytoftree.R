@@ -1,22 +1,22 @@
-## ----knitrsetup, include=FALSE-------------------------------------------
+## ----knitrsetup, include=FALSE------------------------------------------------
 knitr::opts_chunk$set(tidy = TRUE)
 knitr::knit_hooks$set(small.mar = function(before, options, envir) {
     if (before) par(mar = c(0, 0, 0, 0))  # no margin
 })
 
-## ---- message = FALSE, warning = FALSE-----------------------------------
+## ---- message = FALSE, warning = FALSE----------------------------------------
 library(cytometree)
 data(IMdata)
 dim(IMdata)
 colnames(IMdata)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 zero_proportion <- apply(IMdata[,-c(1,2)], 
                          MARGIN = 2, 
                          FUN = function(x){round(prop.table(table(x==0))["TRUE"]*100,2)})
 zero_proportion
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 num_col <- c(3:ncol(IMdata))
 
 tree <- CytofTree(M = IMdata,
@@ -33,11 +33,11 @@ tree <- CytofTree(M = IMdata,
 
 max(tree$labels)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 annot <- Annotation(tree, plot = FALSE, K2markers = colnames(IMdata))
 annot$combinations[1:5,]
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 phenotypes <- list()
 phenotypes[["CD4+"]] <- rbind(c("(Ir191)Dd_DNA1", 1), c("(Ir193)Dd_DNA2", 1), 
                               c("Cell_length", 0), c("(Ce140)Dd_Bead", 0), 
@@ -59,7 +59,7 @@ pheno_result$phenotypesinfo[[1]]
 # CD8+
 pheno_result$phenotypesinfo[[2]]
 
-## ---- echo = FALSE-------------------------------------------------------
+## ---- echo = FALSE------------------------------------------------------------
 automating <- c(pheno_result$phenotypesinfo[[1]]$proportion,
                 pheno_result$phenotypesinfo[[2]]$proportion)
 manual <- c(0.1824389, 0.06523925)

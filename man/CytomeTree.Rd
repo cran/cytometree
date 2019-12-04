@@ -4,8 +4,7 @@
 \alias{CytomeTree}
 \title{Binary tree algorithm for cytometry data analysis.}
 \usage{
-CytomeTree(M, minleaf = 1, t = 0.1, verbose = TRUE,
-  force_first_markers = NULL)
+CytomeTree(M, minleaf = 1, t = 0.1, verbose = TRUE, force_first_markers = NULL)
 }
 \arguments{
 \item{M}{A matrix of size n x p containing cytometry measures
@@ -117,7 +116,7 @@ FmeasureC_no0(ref=manual_labels, pred=Tree_Partition)
 
 
 
-\dontrun{
+if(interactive()){
 
 # Scatterplots.
 library(ggplot2)

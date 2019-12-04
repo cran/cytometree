@@ -1,49 +1,49 @@
-## ----knitrsetup, include=FALSE-------------------------------------------
+## ----knitrsetup, include=FALSE------------------------------------------------
 knitr::opts_chunk$set(tidy = TRUE)
 knitr::knit_hooks$set(small.mar = function(before, options, envir) {
     if (before) par(mar = c(0, 0, 0, 0))  # no margin
 })
 
-## ---- message=FALSE------------------------------------------------------
+## ---- message=FALSE-----------------------------------------------------------
 library(cytometree)
 data(DLBCL)
 dim(DLBCL)
 head(DLBCL)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 # getting the only the cell events with the 3 markers measured:
 cellevents <- DLBCL[,c("FL1", "FL2", "FL4")]
 # storing the maanual gating reference from FlowCAP-I:
 manual_labels <- DLBCL[,"label"]
 
-## ---- message=FALSE, results='hide'--------------------------------------
+## ---- message=FALSE, results='hide'-------------------------------------------
 # Build the binary tree:
 Tree <- CytomeTree(cellevents, minleaf = 1, t = 0.1)
 # Retreive the resulting partition (i.e. automatic gating):
 Tree_Partition <- Tree$labels
 
-## ---- fig.width = 4, fig.height=4, small.mar=TRUE------------------------
+## ---- fig.width = 4, fig.height=4, small.mar=TRUE-----------------------------
 # Plot a graph of the tree (with specific graphical parameters):
 plot_graph(Tree, edge.arrow.size = 0.3, Vcex = 0.8, vertex.size = 30)
 
-## ---- small.mar=TRUE, fig.width=6.5, fig.height=6------------------------
+## ---- small.mar=TRUE, fig.width=6.5, fig.height=6-----------------------------
 # Plot the distribution fit for each node:
 plot_nodes(Tree)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 # Plot the distribution fit for a particular node:
 plot_nodes(Tree, "FL4.1")
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 # Run the annotation algorithm:
 Annot <- Annotation(Tree,plot=FALSE)
 Annot$combinations
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 # Annotation gotten from the tree:
 Tree$annotation
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 
 # seeked cell type: FL2+FL4+
 pheno_ex1 <- RetrievePops(Annot, phenotypes = list(rbind(c("FL2", 1), c("FL4", 1))))
@@ -94,24 +94,24 @@ p <- ggplot2::ggplot(scatter_df,  ggplot2::aes_string(x = "FL2", y="FL4",colour=
  ggplot2::ggtitle(paste("F-measure (manual gating as reference - removing the outliers) =", round(Fmeas, 3)))
 p
 
-## ---- message=FALSE------------------------------------------------------
+## ---- message=FALSE-----------------------------------------------------------
 data(HIPC)
 dim(HIPC)
 head(HIPC)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 # getting the only the cell events with the 3 markers measured:
 cellevents <- HIPC[,c("CCR7", "CD4", "CD45RA", "HLADR" ,"CD38" ,"CD8")]
 # storing the maanual gating reference from FlowCAP-I:
 manual_labels <- HIPC[,"label"]
 
-## ---- message=FALSE, results='hide'--------------------------------------
+## ---- message=FALSE, results='hide'-------------------------------------------
 # Build the binary tree:
 Tree <- CytomeTree(cellevents, minleaf = 1, t = 0.2)
 # Retreive the resulting partition (i.e. automatic gating):
 Tree_Partition <- Tree$labels
 
-## ---- fig.width = 6.2, fig.height = 6.2, small.mar = TRUE----------------
+## ---- fig.width = 6.2, fig.height = 6.2, small.mar = TRUE---------------------
 # Plot a graph of the tree (with specific graphical parameters):
 plot_graph(Tree, edge.arrow.size = 0.4, Vcex = 0.45)
 
@@ -119,12 +119,12 @@ plot_graph(Tree, edge.arrow.size = 0.4, Vcex = 0.45)
 # Plot the fit for 2 specific nodes:
 plot_nodes(Tree, list("CD4.1", "CD45RA.7"))
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 # Run the annotation algorithm:
 Annot <- Annotation(Tree,plot=FALSE)
 Annot$combinations
 
-## ---- fig.width=5, fig.height=5------------------------------------------
+## ---- fig.width=5, fig.height=5-----------------------------------------------
 #One can look for several cell types at once:
 phenotypes <- list()
 # CD8-CD4+CCR7-CD45RA+
@@ -179,11 +179,11 @@ levels(auto_lab) <- viridis::viridis(length(levels(auto_lab)))
 auto_lab <- as.character(auto_lab)
 plot(CD45RA, CCR7, col = auto_lab, main = "Automatic gating")
 
-## ---- message=FALSE, results='hide'--------------------------------------
+## ---- message=FALSE, results='hide'-------------------------------------------
 # Build the binary tree, forcing the first node to be CD4, and the second ones HLADR
 Tree <- CytomeTree(cellevents, minleaf = 1, t = 0.2, force_first_markers = c("CD4", "HLADR"))
 
-## ---- fig.width = 6.2, fig.height = 6.2, small.mar = TRUE----------------
+## ---- fig.width = 6.2, fig.height = 6.2, small.mar = TRUE---------------------
 # Plot a graph of the tree (with specific graphical parameters):
 plot_graph(Tree, edge.arrow.size = 0.4, Vcex = 0.45)
 
