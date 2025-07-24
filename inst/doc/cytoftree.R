@@ -4,7 +4,7 @@ knitr::knit_hooks$set(small.mar = function(before, options, envir) {
     if (before) par(mar = c(0, 0, 0, 0))  # no margin
 })
 
-## ---- message = FALSE, warning = FALSE----------------------------------------
+## ----message = FALSE, warning = FALSE-----------------------------------------
 library(cytometree)
 data(IMdata)
 dim(IMdata)
@@ -59,7 +59,7 @@ pheno_result$phenotypesinfo[[1]]
 # CD8+
 pheno_result$phenotypesinfo[[2]]
 
-## ---- echo = FALSE------------------------------------------------------------
+## ----echo = FALSE-------------------------------------------------------------
 automating <- c(pheno_result$phenotypesinfo[[1]]$proportion,
                 pheno_result$phenotypesinfo[[2]]$proportion)
 manual <- c(0.1824389, 0.06523925)

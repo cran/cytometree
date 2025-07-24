@@ -1,14 +1,12 @@
 
 <!-- README.Rmd generates from README.Rmd. Please generate that file once done editing -->
 
-# cytometree
+# cytometree <a><img src='man/figures/logo.png' align="right" width="139" /></a>
 
-[![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/cytometree)](https://cran.r-project.org/package=cytometree)
-[![Travis-CI Build
-Status](https://travis-ci.org/sistm/cytometree.svg?branch=master)](https://travis-ci.org/sistm/cytometree)
-[![AppVeyor Build
-Status](https://ci.appveyor.com/api/projects/status/github/sistm/cytometree?branch=master&svg=true)](https://ci.appveyor.com/project/borishejblum/cytometree)
-[![codecov.io](https://codecov.io/github/sistm/Cytometree/coverage.svg?branch=master)](https://codecov.io/github/sistm/Cytometree?branch=master)
+[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/cytometree)](https://cran.r-project.org/package=cytometree)
+[![R-CMD-check](https://github.com/sistm/cytometree/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/sistm/cytometree/actions/workflows/R-CMD-check.yaml)
+[![Codecov test
+coverage](https://codecov.io/gh/sistm/cytometree/graph/badge.svg)](https://app.codecov.io/gh/sistm/cytometree)
 [![Downloads](https://cranlogs.r-pkg.org/badges/cytometree?color=blue)](https://www.r-pkg.org/pkg/cytometree)
 
 ## Overview
@@ -37,8 +35,8 @@ The following article explains in more details how `cytometree` works:
 
 > Commenges D, Alkhassim C, Gottardo R, Hejblum BP, Thiébaut R (2018).
 > cytometree: a binary tree algorithm for automatic gating in cytometry
-> analysis. *Cytometry Part A* **93**(11):1132-1140.
-> [\<doi: 10.1002/cyto.a.23601\>](https://doi.org/10.1002/cyto.a.23601)
+> analysis. *Cytometry Part A* **93**(11):1132-1140. [\<doi:
+> 10.1002/cyto.a.23601\>](https://doi.org/10.1002/cyto.a.23601)
 
 ## Installation
 
@@ -56,5 +54,3 @@ Or to get the development version from
 #install.packages("devtools")
 devtools::install_github("sistm/cytometree")
 ```
-
-– Chariff Alkhassim & Boris Hejblum

@@ -19,16 +19,16 @@
 #'and forcing the split at every node. Default is \code{NULL}, in which case
 #'the clustering algorithm is unsupervised.
 #'
-#'@return An object of class 'cytomeTree' providing a partitioning
+#'@returns An object of class 'CytomeTree' providing a partitioning
 #'of the set of n cells.
-#'\itemize{
 #'\item{\code{annotation}}{ A \code{data.frame} containing the annotation of each 
 #'cell population underlying the tree pattern.}
 #'\item{\code{labels}}{ The partitioning of the set of n cells.}
 #'\item{\code{M}}{ The input matrix.}
 #'\item{\code{mark_tree}}{ A two level list containing markers used
 #'for node splitting.}
-#' }
+#'\item{pl_list}{ A list of density estimations for each node used in 
+#'\code{\link{plot_nodes}} for visualization purposes}
 #'
 #'@details The algorithm is based on the construction of a binary tree,
 #'the nodes of which are subpopulations of cells. At each node,

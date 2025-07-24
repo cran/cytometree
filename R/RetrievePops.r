@@ -7,13 +7,11 @@
 #'columns where the name of a used marker is associated to a value
 #'chosen between 0, 1 and 2. 0 translates to -, 1 to + and 2 to ++.
 #' 
-#'@return A \code{list} of two elements.
-#'\itemize{
+#'@returns A \code{list} of two elements:
 #'\item{\code{phenotypesinfo}}{ A \code{list} containing informations 
 #'about sought populations.}
 #'\item{\code{Mergedleaves}}{ The partitioning of the set of n cells
 #'with potentially merged leaves.}
-#'}
 #'
 #'@importFrom methods is
 #'
@@ -72,6 +70,7 @@ RetrievePops <-function(AnnotationObj, phenotypes)
     if(!length(tempres)){
       outlist[[l]][["phenotype"]] <- apply(temp[, 1:2, drop=FALSE], 1, paste, collapse="-") 
       outlist[[l]][["proportion"]] <- NA
+      outlist[[l]][["cells"]] <- NA
       outlist[[l]][["Mergedlabels"]] <- NA
       outlist[[l]][["Newlabel"]] <- NA
     }
@@ -79,6 +78,7 @@ RetrievePops <-function(AnnotationObj, phenotypes)
       leaves <- combinations[,c("leaves")][tempres]
       outlist[[l]][["phenotype"]] <- apply(temp[,1:2, drop=FALSE],1,paste,collapse="-") 
       outlist[[l]][["proportion"]] <- sum(Prop[tempres])
+      outlist[[l]][["cells"]] <- which(AnnotationObj$labels %in% leaves)
       if(length(tempres) > 1) {
         outlist[[l]][["Mergedlabels"]] <- leaves
         outlist[[l]][["Newlabel"]] <- maxlab + 1

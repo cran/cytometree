@@ -8,80 +8,111 @@
 <meta name="generator" content="pandoc" />
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 
 <meta name="author" content="Anthony Devaux, Boris Hejblum" />
 
-<meta name="date" content="2019-12-04" />
+<meta name="date" content="2025-07-24" />
 
 <title>cytoftree: extension of cytometree to analyze mass cytometry data</title>
 
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
 
 
-<style type="text/css">code{white-space: pre;}</style>
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
 <style type="text/css" data-origin="pandoc">
-a.sourceLine { display: inline-block; line-height: 1.25; }
-a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
 }
 @media print {
-code.sourceCode { white-space: pre-wrap; }
-a.sourceLine { text-indent: -1em; padding-left: 1em; }
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
-pre.numberSource a.sourceLine
-  { position: relative; left: -4em; }
-pre.numberSource a.sourceLine::before
-  { content: attr(data-line-number);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-    color: #aaaaaa;
-  }
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
 div.sourceCode
-  {  }
+{ }
 @media screen {
-a.sourceLine::before { text-decoration: underline; }
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code span.at { color: #7d9029; } /* Attribute */
-code span.bn { color: #40a070; } /* BaseN */
-code span.bu { } /* BuiltIn */
-code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code span.ch { color: #4070a0; } /* Char */
-code span.cn { color: #880000; } /* Constant */
-code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code span.dt { color: #902000; } /* DataType */
-code span.dv { color: #40a070; } /* DecVal */
-code span.er { color: #ff0000; font-weight: bold; } /* Error */
-code span.ex { } /* Extension */
-code span.fl { color: #40a070; } /* Float */
-code span.fu { color: #06287e; } /* Function */
-code span.im { } /* Import */
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code span.op { color: #666666; } /* Operator */
-code span.ot { color: #007020; } /* Other */
-code span.pp { color: #bc7a00; } /* Preprocessor */
-code span.sc { color: #4070a0; } /* SpecialChar */
-code span.ss { color: #bb6688; } /* SpecialString */
-code span.st { color: #4070a0; } /* String */
-code span.va { color: #19177c; } /* Variable */
-code span.vs { color: #4070a0; } /* VerbatimString */
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
 </style>
 <script>
 // apply pandoc div.sourceCode style to pre.sourceCode instead
@@ -90,13 +121,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   for (var i = 0; i < sheets.length; i++) {
     if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
     try { var rules = sheets[i].cssRules; } catch (e) { continue; }
-    for (var j = 0; j < rules.length; j++) {
+    var j = 0;
+    while (j < rules.length) {
       var rule = rules[j];
       // check if there is a div.sourceCode rule
-      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
       var style = rule.style.cssText;
       // check if color or background-color is set
-      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
       // replace div.sourceCode by a pre.sourceCode rule
       sheets[i].deleteRule(j);
       sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
@@ -104,6 +142,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   }
 })();
 </script>
+
 
 
 
@@ -117,9 +156,6 @@ padding-right: 2em;
 font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 font-size: 14px;
 line-height: 1.35;
-}
-#header {
-text-align: center;
 }
 #TOC {
 clear: both;
@@ -288,7 +324,8 @@ code > span.st { color: #d14; }
 code > span.co { color: #888888; font-style: italic; } 
 code > span.ot { color: #007020; } 
 code > span.al { color: #ff0000; font-weight: bold; } 
-code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61717; background-color: #e3d2d2; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
 </style>
 
 
@@ -301,61 +338,97 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 
 
 
-<h1 class="title toc-ignore"><code>cytoftree</code>: extension of <code>cytometree</code> to analyze mass cytometry data</h1>
+<h1 class="title toc-ignore"><code>cytoftree</code>: extension of
+<code>cytometree</code> to analyze mass cytometry data</h1>
 <h4 class="author">Anthony Devaux, Boris Hejblum</h4>
-<h4 class="date">2019-12-04</h4>
+<h4 class="date">2025-07-24</h4>
 
 
 <div id="TOC">
 <ul>
-<li><a href="#introduction-to-cytoftree">Introduction to <code>cytoftree</code></a><ul>
-<li><a href="#data-transformation">Data transformation</a></li>
-<li><a href="#binary-tree-construction">Binary tree construction</a></li>
-<li><a href="#post-hoc-annotation">Post-hoc annotation</a></li>
+<li><a href="#introduction-to-cytoftree" id="toc-introduction-to-cytoftree">Introduction to
+<code>cytoftree</code></a>
+<ul>
+<li><a href="#data-transformation" id="toc-data-transformation">Data
+transformation</a></li>
+<li><a href="#binary-tree-construction" id="toc-binary-tree-construction">Binary tree construction</a></li>
+<li><a href="#post-hoc-annotation" id="toc-post-hoc-annotation">Post-hoc
+annotation</a></li>
 </ul></li>
-<li><a href="#influenza-vaccine-response-dataset-analysis-with-cytoftree">Influenza vaccine response dataset analysis with <code>cytoftree</code></a><ul>
-<li><a href="#data-preparation">Data preparation</a></li>
-<li><a href="#cytoftree-function">CytofTree function</a></li>
-<li><a href="#high-dimensional-issues">High dimensional issues</a></li>
-<li><a href="#annotation-function">Annotation function</a></li>
-<li><a href="#retrievepops-providing-informations-for-particular-sub-populations"><code>RetrievePops</code> : providing informations for particular sub-populations</a></li>
-<li><a href="#proportions-comparison-between-manual-and-automatic-gating">Proportions comparison between manual and automatic gating</a></li>
+<li><a href="#influenza-vaccine-response-dataset-analysis-with-cytoftree" id="toc-influenza-vaccine-response-dataset-analysis-with-cytoftree">Influenza
+vaccine response dataset analysis with <code>cytoftree</code></a>
+<ul>
+<li><a href="#data-preparation" id="toc-data-preparation">Data
+preparation</a></li>
+<li><a href="#cytoftree-function" id="toc-cytoftree-function">CytofTree
+function</a></li>
+<li><a href="#high-dimensional-issues" id="toc-high-dimensional-issues">High dimensional issues</a></li>
+<li><a href="#annotation-function" id="toc-annotation-function">Annotation function</a></li>
+<li><a href="#retrievepops-providing-informations-for-particular-sub-populations" id="toc-retrievepops-providing-informations-for-particular-sub-populations"><code>RetrievePops</code>
+: providing informations for particular sub-populations</a></li>
+<li><a href="#proportions-comparison-between-manual-and-automatic-gating" id="toc-proportions-comparison-between-manual-and-automatic-gating">Proportions
+comparison between manual and automatic gating</a></li>
 </ul></li>
 </ul>
 </div>
 
 <div id="introduction-to-cytoftree" class="section level1">
 <h1>Introduction to <code>cytoftree</code></h1>
-<p><code>cytoftree</code> is an extension to <code>cytometree</code> function to analyze mass cytometry data. These data are specific due to a high number of zero and the high number of markers (up to 100 potentially). <code>cytoftree</code> is based on <code>cytometree</code>’s algorithm which is the construction of binary tree, whose nodes represents cell sub-populations, and slighly modified to take into account the specification of mass cytometry data.</p>
+<p><code>cytoftree</code> is an extension to <code>cytometree</code>
+function to analyze mass cytometry data. These data are specific due to
+a high number of zero and the high number of markers (up to 100
+potentially). <code>cytoftree</code> is based on
+<code>cytometree</code>’s algorithm which is the construction of binary
+tree, whose nodes represents cell sub-populations, and slighly modified
+to take into account the specification of mass cytometry data.</p>
 <div id="data-transformation" class="section level2">
 <h2>Data transformation</h2>
-<p>According to the literature, mass cytometry data must be transform to get best partitions. We propose different transformations: <code>asinh</code> (as default), <code>biexp</code>, <code>log10</code> or <code>none</code> (without transformation).</p>
+<p>According to the literature, mass cytometry data must be transform to
+get best partitions. We propose different transformations:
+<code>asinh</code> (as default), <code>biexp</code>, <code>log10</code>
+or <code>none</code> (without transformation).</p>
 </div>
 <div id="binary-tree-construction" class="section level2">
 <h2>Binary tree construction</h2>
 <ol style="list-style-type: decimal">
-<li><p>At each node, for each marker, the cells with zero values are temporarily set aside from the other cells.</p></li>
-<li><p>The remaining observed cells (or “events”) and markers are modeled by both a normal distribution (so <em>unimodal</em>), and a mixture of 2 normal distributions (so <em>bimodal</em>).</p></li>
-<li><p>If the AIC normalized differences <span class="math inline">\(D\)</span> are significant, the cells are split into 2 groups according to the bimodal distribution. Cells with low values are annotated <code>-</code> (no marker) while cells with high values are annotated <code>+</code> (with marker). The cells with zero values are also annotated <code>-</code> (no marker).</p></li>
-<li><p>The binary tree is constructed until the cells can no longer be split into 2 groups.</p></li>
+<li><p>At each node, for each marker, the cells with zero values are
+temporarily set aside from the other cells.</p></li>
+<li><p>The remaining observed cells (or “events”) and markers are
+modeled by both a normal distribution (so <em>unimodal</em>), and a
+mixture of 2 normal distributions (so <em>bimodal</em>).</p></li>
+<li><p>If the AIC normalized differences <span class="math inline">\(D\)</span> are significant, the cells are split
+into 2 groups according to the bimodal distribution. Cells with low
+values are annotated <code>-</code> (no marker) while cells with high
+values are annotated <code>+</code> (with marker). The cells with zero
+values are also annotated <code>-</code> (no marker).</p></li>
+<li><p>The binary tree is constructed until the cells can no longer be
+split into 2 groups.</p></li>
 </ol>
 </div>
 <div id="post-hoc-annotation" class="section level2">
 <h2>Post-hoc annotation</h2>
-<p>Given the unsupervised nature of the binary tree, some of the available markers may not be used to find the different cell populations present in a given sample. To recover a complete annotation, we defined, as a post processing procedure, an annotation method which allows the user to distinguish two (or three) expression levels per marker.</p>
+<p>Given the unsupervised nature of the binary tree, some of the
+available markers may not be used to find the different cell populations
+present in a given sample. To recover a complete annotation, we defined,
+as a post processing procedure, an annotation method which allows the
+user to distinguish two (or three) expression levels per marker.</p>
 </div>
 </div>
 <div id="influenza-vaccine-response-dataset-analysis-with-cytoftree" class="section level1">
-<h1>Influenza vaccine response dataset analysis with <code>cytoftree</code></h1>
-<p>In this example, we will use an influenza vaccine response dataset (from <a href="https://www.immunespace.org/project/Studies/SDY478/begin.view?">ImmuneSpace</a>), with 39 markers. To speed-up the computation, we sampled 10 000 cells from this dataset.</p>
+<h1>Influenza vaccine response dataset analysis with
+<code>cytoftree</code></h1>
+<p>In this example, we will use an influenza vaccine response dataset
+(from <a href="https://immunespace.org/query/study/SDY478">ImmuneSpace
+study SDY478</a>), with 39 markers. To speed-up the computation, we
+sampled 10 000 cells from this dataset.</p>
 <div id="data-preparation" class="section level2">
 <h2>Data preparation</h2>
 <p>First, we can look the structure and the markers of the data.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">library</span>(cytometree)</a>
-<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw">data</span>(IMdata)</a>
-<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="kw">dim</span>(IMdata)</a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(cytometree)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">data</span>(IMdata)</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="fu">dim</span>(IMdata)</span></code></pre></div>
 <pre><code>## [1] 10000    39</code></pre>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw">colnames</span>(IMdata)</a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">colnames</span>(IMdata)</span></code></pre></div>
 <pre><code>##  [1] &quot;Time&quot;             &quot;Cell_length&quot;      &quot;(In113)Dd_CD57&quot;   &quot;(In115)Dd_Dead&quot;  
 ##  [5] &quot;(Ce140)Dd_Bead&quot;   &quot;(Nd142)Dd_CD19&quot;   &quot;(Nd143)Dd_CD4&quot;    &quot;(Nd144)Dd_CD8&quot;   
 ##  [9] &quot;(Nd146)Dd_IgD&quot;    &quot;(Sm147)Dd_CD85j&quot;  &quot;(Nd148)Dd_CD11c&quot;  &quot;(Sm149)Dd_CD16&quot;  
@@ -366,11 +439,12 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 ## [29] &quot;(Er168)Dd_CD24&quot;   &quot;(Tm169)Dd_ICOS&quot;   &quot;(Er170)Dd_CD161&quot;  &quot;(Yb171)Dd_TCRgd&quot; 
 ## [33] &quot;(Yb172)Dd_PD-1&quot;   &quot;(Yb173)Dd_CD123&quot;  &quot;(Yb174)Dd_CD56&quot;   &quot;(Lu175)Dd_HLADR&quot; 
 ## [37] &quot;(Yb176)Dd_CD25&quot;   &quot;(Ir191)Dd_DNA1&quot;   &quot;(Ir193)Dd_DNA2&quot;</code></pre>
-<p>Then, we also check the proportion of zero for each marker, particularity of mass cytometry data.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">zero_proportion &lt;-<span class="st"> </span><span class="kw">apply</span>(IMdata[, <span class="op">-</span><span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">2</span>)], <span class="dt">MARGIN =</span> <span class="dv">2</span>, <span class="dt">FUN =</span> <span class="cf">function</span>(x) {</a>
-<a class="sourceLine" id="cb5-2" data-line-number="2">    <span class="kw">round</span>(<span class="kw">prop.table</span>(<span class="kw">table</span>(x <span class="op">==</span><span class="st"> </span><span class="dv">0</span>))[<span class="st">&quot;TRUE&quot;</span>] <span class="op">*</span><span class="st"> </span><span class="dv">100</span>, <span class="dv">2</span>)</a>
-<a class="sourceLine" id="cb5-3" data-line-number="3">})</a>
-<a class="sourceLine" id="cb5-4" data-line-number="4">zero_proportion</a></code></pre></div>
+<p>Then, we also check the proportion of zero for each marker,
+particularity of mass cytometry data.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>zero_proportion <span class="ot">&lt;-</span> <span class="fu">apply</span>(IMdata[, <span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>)], <span class="at">MARGIN =</span> <span class="dv">2</span>, <span class="at">FUN =</span> <span class="cf">function</span>(x) {</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>    <span class="fu">round</span>(<span class="fu">prop.table</span>(<span class="fu">table</span>(x <span class="sc">==</span> <span class="dv">0</span>))[<span class="st">&quot;TRUE&quot;</span>] <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">2</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>})</span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>zero_proportion</span></code></pre></div>
 <pre><code>##   (In113)Dd_CD57   (In115)Dd_Dead   (Ce140)Dd_Bead   (Nd142)Dd_CD19 
 ##            76.26            60.55            91.00            70.34 
 ##    (Nd143)Dd_CD4    (Nd144)Dd_CD8    (Nd146)Dd_IgD  (Sm147)Dd_CD85j 
@@ -394,28 +468,47 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 </div>
 <div id="cytoftree-function" class="section level2">
 <h2>CytofTree function</h2>
-<p>According to the available markers, a gating strategy may be considered. In this example, we have a gating strategy to conserve only viable cells by splitting on the following markers : <code>DNA1</code>, <code>DNA2</code>, <code>Cell_length</code>, <code>Bead</code> and <code>Dead</code>. This way, we can be as close as possible to manual gating. To do this, we have to force the markers with the <code>force_first_marker</code> option (semi-supervised gating).</p>
-<p>Then, to improve the performance of automating gating, we decided to transform data with <code>asinh</code> transformation (default transformation). Then, we have to choose which markers should be transformed using <code>num_col</code> argument. The columns <code>Time</code> et <code>Cell_length</code> are not mass cytometry measure and shouldn’t be transformed.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">num_col &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">3</span><span class="op">:</span><span class="kw">ncol</span>(IMdata))</a>
-<a class="sourceLine" id="cb7-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb7-3" data-line-number="3">tree &lt;-<span class="st"> </span><span class="kw">CytofTree</span>(<span class="dt">M =</span> IMdata, <span class="dt">minleaf =</span> <span class="dv">1</span>, <span class="dt">t =</span> <span class="fl">0.1</span>, <span class="dt">verbose =</span> <span class="ot">FALSE</span>, <span class="dt">force_first_markers =</span> <span class="kw">c</span>(<span class="st">&quot;(Ir191)Dd_DNA1&quot;</span>, </a>
-<a class="sourceLine" id="cb7-4" data-line-number="4">    <span class="st">&quot;(Ir193)Dd_DNA2&quot;</span>, <span class="st">&quot;Cell_length&quot;</span>, <span class="st">&quot;(Ce140)Dd_Bead&quot;</span>, <span class="st">&quot;(In115)Dd_Dead&quot;</span>), <span class="dt">transformation =</span> <span class="st">&quot;asinh&quot;</span>, </a>
-<a class="sourceLine" id="cb7-5" data-line-number="5">    <span class="dt">num_col =</span> num_col)</a></code></pre></div>
+<p>According to the available markers, a gating strategy may be
+considered. In this example, we have a gating strategy to conserve only
+viable cells by splitting on the following markers : <code>DNA1</code>,
+<code>DNA2</code>, <code>Cell_length</code>, <code>Bead</code> and
+<code>Dead</code>. This way, we can be as close as possible to manual
+gating. To do this, we have to force the markers with the
+<code>force_first_marker</code> option (semi-supervised gating).</p>
+<p>Then, to improve the performance of automating gating, we decided to
+transform data with <code>asinh</code> transformation (default
+transformation). Then, we have to choose which markers should be
+transformed using <code>num_col</code> argument. The columns
+<code>Time</code> et <code>Cell_length</code> are not mass cytometry
+measure and shouldn’t be transformed.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>num_col <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">3</span><span class="sc">:</span><span class="fu">ncol</span>(IMdata))</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>tree <span class="ot">&lt;-</span> <span class="fu">CytofTree</span>(<span class="at">M =</span> IMdata, <span class="at">minleaf =</span> <span class="dv">1</span>, <span class="at">t =</span> <span class="fl">0.1</span>, <span class="at">verbose =</span> <span class="cn">FALSE</span>, <span class="at">force_first_markers =</span> <span class="fu">c</span>(<span class="st">&quot;(Ir191)Dd_DNA1&quot;</span>,</span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>    <span class="st">&quot;(Ir193)Dd_DNA2&quot;</span>, <span class="st">&quot;Cell_length&quot;</span>, <span class="st">&quot;(Ce140)Dd_Bead&quot;</span>, <span class="st">&quot;(In115)Dd_Dead&quot;</span>), <span class="at">transformation =</span> <span class="st">&quot;asinh&quot;</span>,</span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>    <span class="at">num_col =</span> num_col)</span></code></pre></div>
 <pre><code>## Unable to force split on (In115)Dd_Dead for some node at level5
 ## Unable to force split on (In115)Dd_Dead for some node at level5</code></pre>
 <pre><code>## It works !</code></pre>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="kw">max</span>(tree<span class="op">$</span>labels)</a></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="fu">max</span>(tree<span class="sc">$</span>labels)</span></code></pre></div>
 <pre><code>## [1] 824</code></pre>
 </div>
 <div id="high-dimensional-issues" class="section level2">
 <h2>High dimensional issues</h2>
-<p>Due to the high number of markers, <code>cytoftree</code> provides high number of sub-populations. <code>minleaf</code> value for the minimum of cells by sub-population and <code>t</code> threshold for the depth of the binary tree can be modified to get more or less sub-populations. The <code>plot_graph</code> function provides a look on the binary tree, but should be unreadable due to the high number of sub-populations.</p>
+<p>Due to the high number of markers, <code>cytoftree</code> provides
+high number of sub-populations. <code>minleaf</code> value for the
+minimum of cells by sub-population and <code>t</code> threshold for the
+depth of the binary tree can be modified to get more or less
+sub-populations. The <code>plot_graph</code> function provides a look on
+the binary tree, but should be unreadable due to the high number of
+sub-populations.</p>
 </div>
 <div id="annotation-function" class="section level2">
 <h2>Annotation function</h2>
-<p>The <code>annotation</code> function allows to recover the incomplete annotation on sub-populations. <code>combinations</code> option provides the complete annotation on each sub-population.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">annot &lt;-<span class="st"> </span><span class="kw">Annotation</span>(tree, <span class="dt">plot =</span> <span class="ot">FALSE</span>, <span class="dt">K2markers =</span> <span class="kw">colnames</span>(IMdata))</a>
-<a class="sourceLine" id="cb12-2" data-line-number="2">annot<span class="op">$</span>combinations[<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>, ]</a></code></pre></div>
+<p>The <code>annotation</code> function allows to recover the incomplete
+annotation on sub-populations. <code>combinations</code> option provides
+the complete annotation on each sub-population.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>annot <span class="ot">&lt;-</span> <span class="fu">Annotation</span>(tree, <span class="at">plot =</span> <span class="cn">FALSE</span>, <span class="at">K2markers =</span> <span class="fu">colnames</span>(IMdata))</span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>annot<span class="sc">$</span>combinations[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, ]</span></code></pre></div>
 <pre><code>##     Time Cell_length (In113)Dd_CD57 (In115)Dd_Dead (Ce140)Dd_Bead
 ## 787    1           0              0              0              0
 ## 593    1           0              0              0              0
@@ -470,24 +563,29 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 ## 622              1              1    622   119 0.0119
 ## 818              1              1    818    96 0.0096
 ## 636              0              0    636    93 0.0093</code></pre>
-<p>Due to the high number of sub-populations, it’s recommended to use <code>RetrievePops</code> function which provide informations for particular sub-populations.</p>
+<p>Due to the high number of sub-populations, it’s recommended to use
+<code>RetrievePops</code> function which provide informations for
+particular sub-populations.</p>
 </div>
 <div id="retrievepops-providing-informations-for-particular-sub-populations" class="section level2">
-<h2><code>RetrievePops</code> : providing informations for particular sub-populations</h2>
-<p><code>RetrievePops</code> provides several informations on specific sub-populations, in particular the proportions and the sub-populations merged.</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1">phenotypes &lt;-<span class="st"> </span><span class="kw">list</span>()</a>
-<a class="sourceLine" id="cb14-2" data-line-number="2">phenotypes[[<span class="st">&quot;CD4+&quot;</span>]] &lt;-<span class="st"> </span><span class="kw">rbind</span>(<span class="kw">c</span>(<span class="st">&quot;(Ir191)Dd_DNA1&quot;</span>, <span class="dv">1</span>), <span class="kw">c</span>(<span class="st">&quot;(Ir193)Dd_DNA2&quot;</span>, <span class="dv">1</span>), <span class="kw">c</span>(<span class="st">&quot;Cell_length&quot;</span>, </a>
-<a class="sourceLine" id="cb14-3" data-line-number="3">    <span class="dv">0</span>), <span class="kw">c</span>(<span class="st">&quot;(Ce140)Dd_Bead&quot;</span>, <span class="dv">0</span>), <span class="kw">c</span>(<span class="st">&quot;(In115)Dd_Dead&quot;</span>, <span class="dv">0</span>), <span class="kw">c</span>(<span class="st">&quot;(Sm154)Dd_CD14&quot;</span>, <span class="dv">0</span>), <span class="kw">c</span>(<span class="st">&quot;(Er166)Dd_CD33&quot;</span>, </a>
-<a class="sourceLine" id="cb14-4" data-line-number="4">    <span class="dv">0</span>), <span class="kw">c</span>(<span class="st">&quot;(Nd150)Dd_CD3&quot;</span>, <span class="dv">1</span>), <span class="kw">c</span>(<span class="st">&quot;(Nd143)Dd_CD4&quot;</span>, <span class="dv">1</span>))</a>
-<a class="sourceLine" id="cb14-5" data-line-number="5"></a>
-<a class="sourceLine" id="cb14-6" data-line-number="6">phenotypes[[<span class="st">&quot;CD8+&quot;</span>]] &lt;-<span class="st"> </span><span class="kw">rbind</span>(<span class="kw">c</span>(<span class="st">&quot;(Ir191)Dd_DNA1&quot;</span>, <span class="dv">1</span>), <span class="kw">c</span>(<span class="st">&quot;(Ir193)Dd_DNA2&quot;</span>, <span class="dv">1</span>), <span class="kw">c</span>(<span class="st">&quot;Cell_length&quot;</span>, </a>
-<a class="sourceLine" id="cb14-7" data-line-number="7">    <span class="dv">0</span>), <span class="kw">c</span>(<span class="st">&quot;(Ce140)Dd_Bead&quot;</span>, <span class="dv">0</span>), <span class="kw">c</span>(<span class="st">&quot;(In115)Dd_Dead&quot;</span>, <span class="dv">0</span>), <span class="kw">c</span>(<span class="st">&quot;(Sm154)Dd_CD14&quot;</span>, <span class="dv">0</span>), <span class="kw">c</span>(<span class="st">&quot;(Er166)Dd_CD33&quot;</span>, </a>
-<a class="sourceLine" id="cb14-8" data-line-number="8">    <span class="dv">0</span>), <span class="kw">c</span>(<span class="st">&quot;(Nd150)Dd_CD3&quot;</span>, <span class="dv">1</span>), <span class="kw">c</span>(<span class="st">&quot;(Nd144)Dd_CD8&quot;</span>, <span class="dv">1</span>))</a>
-<a class="sourceLine" id="cb14-9" data-line-number="9"></a>
-<a class="sourceLine" id="cb14-10" data-line-number="10">pheno_result &lt;-<span class="st"> </span><span class="kw">RetrievePops</span>(annot, <span class="dt">phenotypes =</span> phenotypes)</a>
-<a class="sourceLine" id="cb14-11" data-line-number="11"></a>
-<a class="sourceLine" id="cb14-12" data-line-number="12"><span class="co"># CD4+</span></a>
-<a class="sourceLine" id="cb14-13" data-line-number="13">pheno_result<span class="op">$</span>phenotypesinfo[[<span class="dv">1</span>]]</a></code></pre></div>
+<h2><code>RetrievePops</code> : providing informations for particular
+sub-populations</h2>
+<p><code>RetrievePops</code> provides several informations on specific
+sub-populations, in particular the proportions and the sub-populations
+merged.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a>phenotypes <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a>phenotypes[[<span class="st">&quot;CD4+&quot;</span>]] <span class="ot">&lt;-</span> <span class="fu">rbind</span>(<span class="fu">c</span>(<span class="st">&quot;(Ir191)Dd_DNA1&quot;</span>, <span class="dv">1</span>), <span class="fu">c</span>(<span class="st">&quot;(Ir193)Dd_DNA2&quot;</span>, <span class="dv">1</span>), <span class="fu">c</span>(<span class="st">&quot;Cell_length&quot;</span>,</span>
+<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a>    <span class="dv">0</span>), <span class="fu">c</span>(<span class="st">&quot;(Ce140)Dd_Bead&quot;</span>, <span class="dv">0</span>), <span class="fu">c</span>(<span class="st">&quot;(In115)Dd_Dead&quot;</span>, <span class="dv">0</span>), <span class="fu">c</span>(<span class="st">&quot;(Sm154)Dd_CD14&quot;</span>, <span class="dv">0</span>), <span class="fu">c</span>(<span class="st">&quot;(Er166)Dd_CD33&quot;</span>,</span>
+<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a>    <span class="dv">0</span>), <span class="fu">c</span>(<span class="st">&quot;(Nd150)Dd_CD3&quot;</span>, <span class="dv">1</span>), <span class="fu">c</span>(<span class="st">&quot;(Nd143)Dd_CD4&quot;</span>, <span class="dv">1</span>))</span>
+<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a></span>
+<span id="cb14-6"><a href="#cb14-6" tabindex="-1"></a>phenotypes[[<span class="st">&quot;CD8+&quot;</span>]] <span class="ot">&lt;-</span> <span class="fu">rbind</span>(<span class="fu">c</span>(<span class="st">&quot;(Ir191)Dd_DNA1&quot;</span>, <span class="dv">1</span>), <span class="fu">c</span>(<span class="st">&quot;(Ir193)Dd_DNA2&quot;</span>, <span class="dv">1</span>), <span class="fu">c</span>(<span class="st">&quot;Cell_length&quot;</span>,</span>
+<span id="cb14-7"><a href="#cb14-7" tabindex="-1"></a>    <span class="dv">0</span>), <span class="fu">c</span>(<span class="st">&quot;(Ce140)Dd_Bead&quot;</span>, <span class="dv">0</span>), <span class="fu">c</span>(<span class="st">&quot;(In115)Dd_Dead&quot;</span>, <span class="dv">0</span>), <span class="fu">c</span>(<span class="st">&quot;(Sm154)Dd_CD14&quot;</span>, <span class="dv">0</span>), <span class="fu">c</span>(<span class="st">&quot;(Er166)Dd_CD33&quot;</span>,</span>
+<span id="cb14-8"><a href="#cb14-8" tabindex="-1"></a>    <span class="dv">0</span>), <span class="fu">c</span>(<span class="st">&quot;(Nd150)Dd_CD3&quot;</span>, <span class="dv">1</span>), <span class="fu">c</span>(<span class="st">&quot;(Nd144)Dd_CD8&quot;</span>, <span class="dv">1</span>))</span>
+<span id="cb14-9"><a href="#cb14-9" tabindex="-1"></a></span>
+<span id="cb14-10"><a href="#cb14-10" tabindex="-1"></a>pheno_result <span class="ot">&lt;-</span> <span class="fu">RetrievePops</span>(annot, <span class="at">phenotypes =</span> phenotypes)</span>
+<span id="cb14-11"><a href="#cb14-11" tabindex="-1"></a></span>
+<span id="cb14-12"><a href="#cb14-12" tabindex="-1"></a><span class="co"># CD4+</span></span>
+<span id="cb14-13"><a href="#cb14-13" tabindex="-1"></a>pheno_result<span class="sc">$</span>phenotypesinfo[[<span class="dv">1</span>]]</span></code></pre></div>
 <pre><code>## $phenotype
 ## [1] &quot;(Ir191)Dd_DNA1-1&quot; &quot;(Ir193)Dd_DNA2-1&quot; &quot;Cell_length-0&quot;    &quot;(Ce140)Dd_Bead-0&quot;
 ## [5] &quot;(In115)Dd_Dead-0&quot; &quot;(Sm154)Dd_CD14-0&quot; &quot;(Er166)Dd_CD33-0&quot; &quot;(Nd150)Dd_CD3-1&quot; 
@@ -495,6 +593,148 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 ## 
 ## $proportion
 ## [1] 0.1953
+## 
+## $cells
+##    [1]    2    9   25   30   34   35   40   43   47   48   52   53   59   69
+##   [15]   84   85   87   88   90   98  115  118  123  125  130  134  136  144
+##   [29]  161  170  183  187  190  193  196  206  207  208  213  223  228  236
+##   [43]  241  242  253  262  269  270  280  283  286  294  304  307  313  315
+##   [57]  318  319  320  325  348  353  356  377  379  385  386  389  397  401
+##   [71]  406  413  414  422  424  425  427  436  439  466  476  483  490  496
+##   [85]  503  504  525  538  547  548  549  551  556  559  568  569  578  580
+##   [99]  582  597  601  603  612  614  615  617  619  628  631  637  638  640
+##  [113]  641  649  658  660  661  662  666  671  682  695  700  702  703  705
+##  [127]  709  711  712  714  722  724  726  730  739  741  749  752  761  764
+##  [141]  793  798  799  800  801  803  812  824  835  840  849  851  855  860
+##  [155]  862  866  878  883  886  889  895  908  910  921  931  932  935  936
+##  [169]  937  949  954  955  956  959  961  979  980  988  999 1001 1014 1026
+##  [183] 1039 1045 1046 1052 1060 1066 1075 1081 1086 1097 1099 1103 1108 1112
+##  [197] 1126 1128 1132 1133 1136 1145 1146 1157 1168 1171 1174 1185 1190 1193
+##  [211] 1196 1197 1207 1208 1212 1215 1216 1219 1221 1224 1231 1235 1236 1238
+##  [225] 1239 1248 1254 1262 1267 1274 1275 1276 1277 1285 1288 1289 1290 1303
+##  [239] 1310 1311 1317 1320 1322 1331 1333 1343 1349 1351 1354 1355 1371 1372
+##  [253] 1376 1380 1391 1405 1406 1407 1408 1409 1411 1412 1416 1426 1429 1437
+##  [267] 1440 1444 1445 1449 1450 1456 1457 1459 1468 1475 1476 1479 1484 1487
+##  [281] 1491 1496 1497 1498 1500 1503 1510 1514 1515 1529 1530 1531 1536 1537
+##  [295] 1557 1559 1563 1567 1568 1573 1574 1575 1580 1582 1585 1591 1596 1601
+##  [309] 1602 1632 1633 1637 1640 1641 1663 1667 1670 1679 1681 1682 1685 1693
+##  [323] 1709 1710 1731 1734 1737 1738 1753 1764 1766 1768 1773 1775 1778 1779
+##  [337] 1780 1781 1784 1787 1789 1791 1795 1800 1801 1803 1806 1811 1825 1834
+##  [351] 1835 1839 1842 1846 1847 1848 1857 1864 1873 1880 1905 1906 1908 1919
+##  [365] 1920 1923 1933 1934 1940 1954 1956 1965 1972 1991 1992 1998 2004 2008
+##  [379] 2013 2016 2020 2023 2024 2030 2032 2033 2034 2043 2044 2050 2062 2074
+##  [393] 2080 2084 2096 2097 2103 2109 2112 2124 2132 2133 2135 2142 2154 2155
+##  [407] 2163 2170 2171 2175 2189 2192 2196 2203 2207 2209 2212 2217 2218 2235
+##  [421] 2245 2261 2269 2271 2285 2287 2291 2297 2298 2301 2302 2309 2311 2319
+##  [435] 2320 2322 2327 2330 2345 2346 2349 2361 2365 2393 2400 2402 2413 2416
+##  [449] 2418 2423 2428 2429 2433 2434 2440 2445 2449 2456 2462 2465 2469 2477
+##  [463] 2490 2492 2495 2510 2511 2513 2518 2521 2524 2529 2530 2543 2549 2551
+##  [477] 2553 2554 2559 2562 2563 2568 2571 2572 2583 2585 2593 2611 2615 2626
+##  [491] 2629 2633 2641 2644 2646 2652 2656 2661 2668 2670 2675 2679 2681 2682
+##  [505] 2683 2690 2698 2701 2703 2704 2706 2707 2709 2710 2712 2716 2717 2729
+##  [519] 2733 2737 2738 2748 2759 2773 2784 2786 2793 2797 2812 2829 2834 2837
+##  [533] 2839 2841 2848 2856 2857 2863 2868 2874 2879 2883 2890 2909 2912 2915
+##  [547] 2924 2926 2927 2932 2936 2938 2942 2950 2959 2963 2969 2970 2980 2982
+##  [561] 2984 2987 2993 2994 2997 2999 3000 3005 3011 3012 3013 3016 3019 3022
+##  [575] 3024 3029 3031 3041 3042 3044 3047 3048 3051 3056 3061 3068 3072 3073
+##  [589] 3074 3075 3076 3079 3082 3090 3093 3106 3115 3117 3129 3139 3140 3142
+##  [603] 3144 3150 3152 3162 3165 3168 3169 3173 3176 3177 3181 3185 3189 3191
+##  [617] 3193 3216 3217 3223 3231 3241 3242 3246 3251 3252 3253 3260 3262 3263
+##  [631] 3269 3272 3274 3286 3288 3299 3302 3313 3315 3319 3320 3323 3334 3336
+##  [645] 3337 3350 3351 3358 3361 3363 3364 3368 3390 3393 3394 3396 3401 3424
+##  [659] 3430 3441 3448 3452 3455 3461 3462 3474 3479 3484 3486 3487 3494 3497
+##  [673] 3510 3517 3522 3523 3524 3530 3533 3536 3537 3540 3550 3559 3560 3568
+##  [687] 3580 3584 3587 3599 3603 3604 3611 3612 3614 3616 3618 3620 3624 3627
+##  [701] 3632 3638 3641 3645 3647 3649 3655 3671 3674 3676 3677 3682 3692 3698
+##  [715] 3699 3718 3720 3723 3737 3742 3744 3746 3759 3762 3764 3769 3773 3796
+##  [729] 3799 3804 3806 3807 3810 3813 3815 3818 3821 3825 3837 3839 3858 3864
+##  [743] 3868 3869 3871 3879 3904 3905 3908 3913 3921 3922 3923 3934 3937 3949
+##  [757] 3950 3951 3954 3955 3959 3962 3967 3980 3990 3997 4002 4004 4011 4020
+##  [771] 4024 4025 4026 4029 4030 4032 4035 4039 4044 4045 4046 4047 4048 4049
+##  [785] 4057 4058 4059 4060 4061 4068 4069 4072 4073 4092 4093 4095 4096 4100
+##  [799] 4105 4115 4122 4133 4138 4142 4144 4161 4171 4178 4180 4181 4182 4186
+##  [813] 4193 4195 4199 4206 4219 4225 4233 4236 4237 4249 4264 4275 4280 4281
+##  [827] 4295 4298 4300 4303 4304 4309 4312 4313 4317 4318 4334 4338 4339 4341
+##  [841] 4345 4347 4348 4349 4356 4360 4362 4367 4378 4388 4389 4395 4396 4402
+##  [855] 4416 4420 4428 4430 4433 4438 4441 4445 4452 4456 4457 4458 4462 4464
+##  [869] 4467 4472 4473 4474 4476 4483 4498 4501 4503 4506 4509 4510 4514 4516
+##  [883] 4520 4524 4535 4537 4542 4543 4544 4546 4551 4557 4559 4566 4569 4572
+##  [897] 4575 4582 4583 4587 4592 4599 4605 4606 4609 4614 4618 4632 4635 4636
+##  [911] 4638 4644 4654 4658 4671 4673 4678 4683 4686 4687 4713 4715 4717 4718
+##  [925] 4719 4724 4725 4728 4730 4734 4738 4744 4753 4759 4765 4768 4769 4777
+##  [939] 4783 4786 4801 4804 4809 4812 4813 4823 4824 4843 4851 4852 4862 4867
+##  [953] 4873 4874 4876 4883 4898 4899 4900 4919 4929 4936 4945 4956 4964 4966
+##  [967] 4969 4970 4973 4976 4980 4981 4983 4984 4990 5003 5005 5012 5016 5020
+##  [981] 5024 5025 5027 5028 5048 5058 5060 5063 5068 5070 5080 5082 5084 5087
+##  [995] 5088 5094 5096 5097 5104 5121 5124 5126 5131 5136 5142 5146 5149 5161
+## [1009] 5164 5171 5174 5176 5184 5191 5196 5201 5203 5205 5209 5211 5227 5228
+## [1023] 5230 5231 5232 5233 5238 5240 5242 5243 5255 5256 5260 5262 5264 5265
+## [1037] 5271 5285 5292 5296 5300 5304 5314 5315 5316 5322 5326 5334 5337 5345
+## [1051] 5346 5348 5353 5354 5361 5362 5368 5369 5373 5379 5381 5382 5387 5393
+## [1065] 5398 5406 5411 5412 5416 5421 5425 5426 5428 5429 5437 5442 5444 5446
+## [1079] 5453 5457 5461 5463 5464 5468 5471 5475 5487 5494 5500 5502 5503 5511
+## [1093] 5516 5518 5523 5530 5531 5533 5539 5540 5545 5548 5549 5553 5556 5558
+## [1107] 5560 5566 5572 5573 5584 5586 5590 5595 5600 5605 5607 5609 5614 5617
+## [1121] 5618 5619 5620 5625 5634 5636 5651 5652 5655 5657 5660 5677 5685 5690
+## [1135] 5694 5699 5700 5708 5709 5714 5716 5718 5726 5734 5735 5736 5738 5742
+## [1149] 5744 5753 5754 5756 5758 5767 5776 5787 5788 5791 5792 5797 5801 5811
+## [1163] 5815 5825 5830 5835 5836 5839 5845 5852 5853 5862 5863 5864 5874 5876
+## [1177] 5878 5881 5888 5902 5907 5909 5912 5917 5925 5926 5929 5933 5935 5939
+## [1191] 5945 5948 5952 5954 5961 5964 5989 6002 6009 6015 6016 6017 6019 6021
+## [1205] 6028 6040 6041 6045 6065 6074 6085 6086 6090 6093 6098 6099 6101 6113
+## [1219] 6116 6130 6132 6135 6137 6142 6158 6159 6165 6168 6170 6173 6174 6175
+## [1233] 6181 6182 6185 6187 6189 6192 6193 6194 6208 6210 6222 6224 6242 6243
+## [1247] 6248 6253 6265 6269 6275 6276 6287 6292 6293 6295 6297 6299 6305 6307
+## [1261] 6309 6311 6314 6323 6332 6336 6345 6354 6367 6368 6372 6377 6378 6387
+## [1275] 6388 6389 6394 6400 6402 6405 6410 6419 6424 6428 6429 6453 6463 6472
+## [1289] 6487 6490 6506 6525 6528 6531 6534 6537 6538 6540 6541 6547 6551 6570
+## [1303] 6574 6575 6578 6579 6599 6605 6608 6619 6633 6636 6640 6641 6650 6659
+## [1317] 6663 6675 6680 6681 6699 6705 6708 6717 6718 6720 6742 6751 6753 6761
+## [1331] 6781 6784 6790 6791 6796 6799 6802 6804 6809 6831 6834 6845 6847 6850
+## [1345] 6856 6857 6863 6866 6875 6880 6881 6883 6884 6885 6886 6890 6897 6899
+## [1359] 6900 6903 6906 6911 6920 6922 6923 6932 6934 6946 6958 6959 6966 6968
+## [1373] 6974 6976 6978 6981 7003 7005 7008 7011 7012 7020 7024 7026 7027 7030
+## [1387] 7035 7041 7044 7053 7070 7073 7088 7091 7093 7112 7116 7120 7121 7125
+## [1401] 7129 7132 7136 7137 7142 7149 7157 7160 7172 7179 7182 7190 7193 7198
+## [1415] 7205 7210 7212 7216 7224 7225 7226 7231 7232 7252 7256 7257 7261 7266
+## [1429] 7271 7276 7285 7286 7291 7293 7294 7299 7307 7308 7311 7324 7326 7328
+## [1443] 7330 7336 7351 7352 7356 7357 7360 7362 7363 7368 7374 7384 7387 7394
+## [1457] 7418 7426 7443 7451 7467 7470 7472 7476 7479 7485 7495 7497 7499 7510
+## [1471] 7521 7526 7527 7528 7539 7540 7542 7544 7546 7547 7554 7575 7578 7587
+## [1485] 7599 7604 7605 7606 7615 7616 7620 7629 7631 7632 7633 7640 7647 7649
+## [1499] 7654 7655 7661 7664 7665 7667 7668 7669 7676 7678 7682 7683 7696 7702
+## [1513] 7703 7709 7713 7727 7735 7737 7741 7744 7746 7747 7758 7761 7768 7783
+## [1527] 7786 7789 7797 7798 7806 7811 7819 7831 7832 7833 7834 7842 7845 7851
+## [1541] 7852 7853 7854 7857 7859 7863 7865 7871 7876 7880 7881 7887 7895 7902
+## [1555] 7903 7907 7911 7915 7916 7917 7920 7930 7934 7975 7981 7992 7995 8005
+## [1569] 8017 8021 8027 8032 8038 8039 8049 8058 8061 8071 8077 8098 8100 8106
+## [1583] 8111 8118 8120 8121 8132 8133 8137 8138 8151 8152 8154 8156 8159 8162
+## [1597] 8169 8172 8182 8183 8184 8186 8194 8202 8206 8207 8208 8213 8215 8236
+## [1611] 8239 8242 8247 8254 8268 8272 8273 8276 8277 8284 8293 8295 8304 8305
+## [1625] 8313 8319 8348 8349 8352 8353 8359 8361 8365 8369 8370 8376 8381 8403
+## [1639] 8406 8415 8421 8425 8426 8434 8445 8458 8467 8468 8481 8486 8495 8497
+## [1653] 8499 8514 8517 8518 8519 8530 8532 8534 8536 8541 8542 8545 8550 8554
+## [1667] 8565 8567 8573 8580 8585 8593 8594 8604 8622 8624 8629 8632 8635 8638
+## [1681] 8639 8641 8644 8650 8653 8656 8660 8661 8664 8671 8682 8688 8692 8697
+## [1695] 8703 8705 8706 8728 8745 8747 8749 8754 8765 8784 8788 8790 8796 8799
+## [1709] 8800 8802 8808 8809 8816 8817 8819 8823 8827 8834 8838 8843 8845 8855
+## [1723] 8857 8874 8881 8885 8898 8903 8906 8909 8917 8921 8924 8938 8939 8940
+## [1737] 8942 8947 8949 8950 8954 8958 8959 8960 8975 8982 8993 8994 8997 9011
+## [1751] 9019 9024 9031 9043 9057 9058 9060 9063 9064 9067 9073 9074 9075 9076
+## [1765] 9082 9083 9087 9088 9098 9108 9116 9120 9123 9127 9131 9132 9138 9139
+## [1779] 9145 9163 9166 9169 9171 9172 9181 9195 9196 9198 9199 9206 9211 9215
+## [1793] 9226 9227 9228 9233 9236 9237 9252 9256 9258 9265 9270 9273 9294 9305
+## [1807] 9306 9314 9318 9321 9322 9323 9328 9331 9335 9337 9351 9355 9360 9370
+## [1821] 9378 9380 9388 9389 9390 9394 9399 9405 9406 9416 9419 9420 9421 9424
+## [1835] 9426 9450 9459 9462 9472 9473 9479 9480 9481 9485 9488 9490 9507 9508
+## [1849] 9518 9541 9542 9550 9558 9560 9561 9566 9572 9575 9582 9583 9588 9591
+## [1863] 9598 9605 9610 9612 9626 9632 9635 9636 9638 9640 9643 9650 9651 9656
+## [1877] 9660 9661 9663 9670 9673 9675 9676 9679 9687 9692 9693 9694 9696 9706
+## [1891] 9709 9713 9718 9732 9733 9734 9742 9747 9749 9756 9757 9759 9765 9766
+## [1905] 9771 9776 9793 9802 9806 9810 9812 9813 9843 9853 9855 9858 9859 9868
+## [1919] 9869 9872 9873 9878 9885 9889 9892 9893 9897 9899 9900 9901 9903 9904
+## [1933] 9908 9913 9930 9935 9937 9938 9940 9945 9950 9959 9961 9970 9973 9977
+## [1947] 9980 9981 9988 9989 9990 9992 9994
 ## 
 ## $Mergedlabels
 ##   [1] 787 818 786 817 739 773 385 697 471 714 814 824 801 469 806 802 618 640
@@ -507,8 +747,8 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 ## 
 ## $Newlabel
 ## [1] 825</code></pre>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1"><span class="co"># CD8+</span></a>
-<a class="sourceLine" id="cb16-2" data-line-number="2">pheno_result<span class="op">$</span>phenotypesinfo[[<span class="dv">2</span>]]</a></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a><span class="co"># CD8+</span></span>
+<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a>pheno_result<span class="sc">$</span>phenotypesinfo[[<span class="dv">2</span>]]</span></code></pre></div>
 <pre><code>## $phenotype
 ## [1] &quot;(Ir191)Dd_DNA1-1&quot; &quot;(Ir193)Dd_DNA2-1&quot; &quot;Cell_length-0&quot;    &quot;(Ce140)Dd_Bead-0&quot;
 ## [5] &quot;(In115)Dd_Dead-0&quot; &quot;(Sm154)Dd_CD14-0&quot; &quot;(Er166)Dd_CD33-0&quot; &quot;(Nd150)Dd_CD3-1&quot; 
@@ -516,6 +756,59 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 ## 
 ## $proportion
 ## [1] 0.0752
+## 
+## $cells
+##   [1]    2    7    8   19   32   60   74   83   96  113  117  122  133  137  143
+##  [16]  158  166  175  224  245  247  253  255  258  274  278  285  314  323  335
+##  [31]  347  372  375  395  405  411  419  420  425  432  437  445  452  453  456
+##  [46]  465  486  503  510  513  516  530  541  553  558  597  608  609  621  635
+##  [61]  657  677  681  691  727  737  738  745  777  795  842  855  856  857  861
+##  [76]  877  909  914  922  924  996 1008 1009 1012 1029 1031 1032 1042 1065 1078
+##  [91] 1079 1096 1100 1110 1127 1130 1141 1163 1228 1230 1237 1242 1287 1297 1302
+## [106] 1358 1359 1374 1428 1472 1505 1522 1525 1527 1540 1541 1551 1556 1579 1595
+## [121] 1605 1607 1634 1646 1671 1672 1677 1690 1705 1711 1745 1750 1755 1818 1829
+## [136] 1842 1853 1857 1862 1877 1891 1896 1909 1916 1918 1946 1947 1957 2041 2058
+## [151] 2068 2073 2095 2101 2110 2131 2144 2147 2152 2167 2172 2173 2176 2213 2243
+## [166] 2249 2251 2253 2304 2329 2341 2346 2366 2374 2389 2392 2395 2399 2403 2410
+## [181] 2417 2426 2437 2444 2481 2482 2487 2514 2516 2523 2525 2527 2528 2557 2563
+## [196] 2569 2603 2604 2613 2624 2627 2636 2638 2647 2680 2689 2718 2724 2727 2748
+## [211] 2756 2777 2789 2823 2833 2849 2853 2859 2860 2862 2872 2881 2908 2917 2928
+## [226] 2934 2939 2944 2951 2954 2965 2976 2992 2996 3001 3020 3024 3038 3094 3120
+## [241] 3121 3124 3131 3145 3160 3165 3172 3201 3214 3220 3267 3275 3293 3345 3355
+## [256] 3389 3404 3405 3447 3450 3453 3458 3468 3469 3486 3496 3498 3502 3534 3571
+## [271] 3578 3579 3591 3597 3601 3604 3622 3628 3653 3654 3672 3686 3714 3724 3736
+## [286] 3747 3761 3769 3778 3787 3800 3801 3803 3817 3820 3825 3829 3831 3847 3889
+## [301] 3897 3900 3919 3925 3941 3952 3953 3969 3981 3995 4010 4036 4046 4064 4081
+## [316] 4090 4098 4101 4105 4106 4116 4154 4184 4224 4234 4256 4262 4263 4273 4291
+## [331] 4299 4308 4380 4444 4448 4449 4459 4475 4480 4481 4513 4517 4527 4541 4550
+## [346] 4570 4590 4593 4616 4638 4648 4651 4717 4720 4723 4735 4737 4758 4767 4772
+## [361] 4794 4818 4819 4840 4850 4861 4866 4882 4886 4893 4926 4931 4934 4943 4953
+## [376] 4967 5002 5004 5009 5035 5045 5069 5070 5107 5136 5137 5141 5147 5159 5160
+## [391] 5167 5172 5175 5193 5204 5217 5228 5235 5237 5257 5258 5268 5289 5327 5370
+## [406] 5386 5389 5391 5400 5405 5407 5409 5420 5451 5472 5473 5494 5546 5561 5568
+## [421] 5570 5593 5599 5600 5630 5633 5656 5663 5686 5707 5741 5772 5786 5793 5821
+## [436] 5832 5835 5847 5887 5889 5894 5901 5909 5910 5916 5946 5947 5997 6000 6008
+## [451] 6012 6020 6042 6048 6052 6057 6065 6070 6084 6091 6092 6123 6124 6137 6145
+## [466] 6164 6172 6179 6188 6196 6201 6210 6211 6212 6227 6228 6238 6245 6279 6303
+## [481] 6310 6312 6341 6364 6376 6383 6401 6403 6427 6430 6449 6475 6481 6491 6514
+## [496] 6515 6520 6527 6565 6582 6598 6606 6611 6630 6631 6638 6658 6671 6675 6686
+## [511] 6691 6705 6706 6714 6723 6731 6755 6762 6765 6779 6807 6828 6829 6849 6854
+## [526] 6882 6894 6895 6906 6912 6914 6927 6928 6929 6943 6961 6973 7012 7016 7076
+## [541] 7085 7107 7122 7151 7168 7220 7240 7253 7283 7312 7390 7414 7417 7425 7448
+## [556] 7475 7482 7486 7487 7525 7532 7534 7537 7538 7577 7583 7584 7586 7627 7643
+## [571] 7652 7673 7678 7700 7704 7710 7714 7715 7751 7787 7791 7820 7823 7824 7826
+## [586] 7837 7870 7875 7879 7883 7901 7902 7938 7959 7970 7989 8002 8004 8016 8035
+## [601] 8050 8064 8066 8069 8070 8086 8095 8105 8109 8112 8130 8139 8201 8204 8224
+## [616] 8229 8232 8248 8254 8279 8306 8308 8316 8329 8333 8338 8339 8364 8372 8384
+## [631] 8385 8388 8401 8405 8417 8419 8423 8428 8437 8445 8476 8477 8511 8517 8519
+## [646] 8522 8543 8559 8584 8587 8592 8625 8648 8653 8671 8694 8711 8715 8719 8741
+## [661] 8742 8760 8773 8777 8807 8818 8864 8873 8895 8904 8916 8922 8928 8929 8943
+## [676] 8946 8948 8959 8965 8974 8995 9009 9018 9027 9028 9033 9051 9080 9081 9118
+## [691] 9130 9137 9141 9146 9159 9177 9178 9210 9216 9257 9263 9314 9316 9321 9338
+## [706] 9342 9361 9363 9365 9367 9369 9419 9431 9435 9437 9445 9489 9503 9526 9531
+## [721] 9540 9565 9571 9574 9581 9595 9599 9622 9625 9641 9644 9648 9677 9683 9687
+## [736] 9702 9740 9776 9787 9791 9828 9832 9834 9894 9904 9920 9942 9958 9966 9972
+## [751] 9978 9993
 ## 
 ## $Mergedlabels
 ##  [1] 593 673 700 621 474 535 591 186 220 588 289 507 563 429 532 587 590 675 180
@@ -528,29 +821,32 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 </div>
 <div id="proportions-comparison-between-manual-and-automatic-gating" class="section level2">
 <h2>Proportions comparison between manual and automatic gating</h2>
-<p>We can compare proportions providing by automatic gating (<code>cytoftree</code>) and manual gating for the selected sub-populations.</p>
+<p>We can compare proportions providing by automatic gating
+(<code>cytoftree</code>) and manual gating for the selected
+sub-populations.</p>
 <table>
 <thead>
 <tr class="header">
-<th></th>
+<th align="left"></th>
 <th align="right">CD4+</th>
 <th align="right">CD8+</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Manual Gating</td>
+<td align="left">Manual Gating</td>
 <td align="right">0.182</td>
 <td align="right">0.065</td>
 </tr>
 <tr class="even">
-<td>Automating Gating</td>
+<td align="left">Automating Gating</td>
 <td align="right">0.195</td>
 <td align="right">0.075</td>
 </tr>
 </tbody>
 </table>
-<p><code>cytoftree</code> provides good results, close to the proportions getting by manual gating.</p>
+<p><code>cytoftree</code> provides good results, close to the
+proportions getting by manual gating.</p>
 </div>
 </div>
 
